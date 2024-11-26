@@ -2,11 +2,13 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { CreateUserUseCase } from '../../useCases/user/CreateUser';
 import { GetUserUseCase } from '../../useCases/user/GetUser';
+import { GetUsersUseCase } from '../../useCases/user/GetUsers';
 
 export class UserController extends BaseController {
   constructor(
     private createUserUseCase: CreateUserUseCase,
     private getUserUseCase: GetUserUseCase,
+    private getUsersUseCase: GetUsersUseCase,
   ) {
     super();
   }
@@ -32,6 +34,9 @@ export class UserController extends BaseController {
               return;
             }
             this.ok(res, user);
+          } else {
+            const users = await this.getUsersUseCase.execute();
+            this.ok(res, users);
           }
           break;
 

@@ -46,6 +46,8 @@ import { PrismaNotificationRepository } from '../../infrastructure/repositories/
  * /api/notifications:
  *   post:
  *     summary: Create a new notification
+ *     tags:
+ *       - Notifications
  *     requestBody:
  *       required: true
  *       content:
@@ -70,6 +72,8 @@ import { PrismaNotificationRepository } from '../../infrastructure/repositories/
  *               $ref: '#/components/schemas/Notification'
  *   get:
  *     summary: Get all notifications
+ *     tags:
+ *       - Notifications
  *     parameters:
  *       - in: query
  *         name: userId
@@ -89,14 +93,22 @@ import { PrismaNotificationRepository } from '../../infrastructure/repositories/
 
 const notificationRouter = Router();
 const notificationRepository = new PrismaNotificationRepository();
-const createNotificationUseCase = new CreateNotificationUseCase(notificationRepository);
-const getNotificationsUseCase = new GetNotificationsUseCase(notificationRepository);
+const createNotificationUseCase = new CreateNotificationUseCase(
+  notificationRepository,
+);
+const getNotificationsUseCase = new GetNotificationsUseCase(
+  notificationRepository,
+);
 const notificationController = new NotificationController(
   createNotificationUseCase,
   getNotificationsUseCase,
 );
 
-notificationRouter.post('/', (req, res) => notificationController.execute(req, res));
-notificationRouter.get('/', (req, res) => notificationController.execute(req, res));
+notificationRouter.post('/', (req, res) =>
+  notificationController.execute(req, res),
+);
+notificationRouter.get('/', (req, res) =>
+  notificationController.execute(req, res),
+);
 
 export { notificationRouter };
