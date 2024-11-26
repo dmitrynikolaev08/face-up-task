@@ -1,4 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 const options = {
   definition: {
@@ -19,3 +21,7 @@ const options = {
 };
 
 export const specs = swaggerJsdoc(options);
+
+// Write swagger.json file
+const swaggerFile = join(__dirname, '../../../../swagger.json');
+writeFileSync(swaggerFile, JSON.stringify(specs, null, 2));

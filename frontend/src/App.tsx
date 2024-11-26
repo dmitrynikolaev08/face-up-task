@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { UserList } from './components/UserList';
 
 function App() {
   const [health, setHealth] = useState<{ status: string } | null>(null);
@@ -38,6 +39,7 @@ function App() {
           </div>
           {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
         </div>
+        <UserList />
       </div>
     </div>
   );

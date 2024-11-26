@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { json } from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 import { specs } from './interface/swagger/config';
 import { userRouter } from './interface/routes/userRoutes';
 import { notificationRouter } from './interface/routes/notificationRoutes';
@@ -9,6 +10,7 @@ import { notificationRouter } from './interface/routes/notificationRoutes';
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
