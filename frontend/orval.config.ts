@@ -3,7 +3,7 @@ import { defineConfig } from 'orval';
 export default defineConfig({
   api: {
     input: {
-      target: '../swagger.json',
+      target: './src/api/swagger.json',
     },
     output: {
       mode: 'tags-split',

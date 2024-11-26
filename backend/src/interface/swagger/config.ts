@@ -23,5 +23,8 @@ const options = {
 export const specs = swaggerJsdoc(options);
 
 // Write swagger.json file
-const swaggerFile = join(__dirname, '../../../../swagger.json');
+const swaggerFile = join(
+  __dirname,
+  '../../../../frontend/src/api/swagger.json',
+);
 writeFileSync(swaggerFile, JSON.stringify(specs, null, 2));
