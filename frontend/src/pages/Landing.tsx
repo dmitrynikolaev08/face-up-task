@@ -36,8 +36,8 @@ export const Landing = () => {
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">
-        Send Notification to School
+      <h1 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl mb-8">
+        Send Report to School
       </h1>
 
       <div className="w-full max-w-md space-y-8">
@@ -58,12 +58,12 @@ export const Landing = () => {
         </Select>
 
         <Button
-          className="w-full"
+          className="w-auto"
           size="lg"
           onClick={handleContinue}
           disabled={!selectedInstitution}
         >
-          <Send className="mr-2 h-4 w-4" />
+          <Send className="mr-1 h-4 w-4" />
           Continue
         </Button>
       </div>

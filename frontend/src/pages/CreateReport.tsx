@@ -35,7 +35,7 @@ const formSchema = z.object({
   message: z.string().min(1, 'Message is required'),
 });
 
-export const CreateNotification = () => {
+export const CreateReport = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { selectedInstitution } = useInstitution();

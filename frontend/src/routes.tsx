@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import App from './App';
-import { CreateNotification } from './pages/CreateNotification';
+import { CreateReport } from './pages/CreateReport';
 import { Landing } from './pages/Landing';
 
 export const router = createBrowserRouter([
@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'create',
-        element: <CreateNotification />,
+        element: <CreateReport />,
       },
     ],
   },
