@@ -6,7 +6,7 @@ import cors from 'cors';
 import { specs } from './interface/swagger/config';
 import { userRouter } from './interface/routes/userRoutes';
 import { notificationRouter } from './interface/routes/notificationRoutes';
-import { upload } from './interface/middleware/uploadMiddleware';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,6 +21,8 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/users', userRouter);
 app.use('/api/notifications', notificationRouter);
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

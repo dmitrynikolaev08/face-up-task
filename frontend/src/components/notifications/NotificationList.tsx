@@ -3,6 +3,8 @@ import { Notification } from '../../api/model';
 import { AlertCircle, FileText, Loader2 } from 'lucide-react';
 
 export const NotificationList = () => {
+  const serverUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  
   const {
     data: notifications,
     isLoading,
@@ -42,7 +44,8 @@ export const NotificationList = () => {
                   {notification.files.map((file) => (
                     <a
                       key={file.id}
-                      href={file.path}
+                      href={`${serverUrl}${file.path}`}
+                      download={file.filename}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-sm text-primary hover:underline"
