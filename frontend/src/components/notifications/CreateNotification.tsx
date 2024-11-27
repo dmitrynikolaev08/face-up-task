@@ -1,45 +1,53 @@
-import { useState } from 'react';
-import { usePostApiNotifications } from '../../api/notifications/notifications';
-import { useGetApiUsers } from '../../api/users/users';
-import { User, PostApiNotificationsBody } from '../../api/model';
-import { useFileUpload } from '../../hooks/useFileUpload';
-import { AlertCircle, Loader2, X } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
+import { AlertCircle, Loader2, X } from 'lucide-react';
+import { useState } from 'react';
+
+import { PostApiNotificationsBody, User } from '@/api/model';
+import { usePostApiNotifications } from '@/api/notifications/notifications';
+import { useGetApiUsers } from '@/api/users/users';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 export const CreateNotification = () => {
   const [message, setMessage] = useState('');
-  const { files, fileErrors, handleFileChange, removeFile, clearFiles } = useFileUpload();
-  
+  const { files, fileErrors, handleFileChange, removeFile, clearFiles } =
+    useFileUpload();
+
   const queryClient = useQueryClient();
   const { data: users } = useGetApiUsers<User[], Error>();
-  const { mutate: createNotification, isPending } = usePostApiNotifications();
+  const { mutate: createNotification, isPending } = usePostApiNotifications<
+    PostApiNotificationsBody,
+    Error
+  >();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!users?.[0]?.id || fileErrors.length > 0) return;
-    
+
     const formData = new FormData();
     formData.append('message', message);
     formData.append('userId', users[0].id);
-    
-    files.forEach(file => {
+
+    files.forEach((file) => {
       formData.append('files', file);
     });
 
-    createNotification({ 
-      data: {
-        message,
-        userId: users[0].id,
-        files
-      }
-    }, {
-      onSuccess: () => {
-        setMessage('');
-        clearFiles();
-        queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
-      }
-    });
+    createNotification(
+      {
+        data: {
+          message,
+          userId: users[0].id,
+          files,
+        },
+      },
+      {
+        onSuccess: () => {
+          setMessage('');
+          clearFiles();
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+        },
+      },
+    );
   };
 
   return (
@@ -65,7 +73,7 @@ export const CreateNotification = () => {
             className="w-full"
             accept="image/*,application/pdf,.doc,.docx"
           />
-          
+
           {fileErrors.length > 0 && (
             <div className="text-sm text-destructive space-y-1">
               {fileErrors.map((error, index) => (

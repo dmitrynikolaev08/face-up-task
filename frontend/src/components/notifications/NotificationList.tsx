@@ -1,7 +1,8 @@
-import { useGetApiNotifications } from '../../api/notifications/notifications';
-import { Notification } from '../../api/model';
 import { AlertCircle, FileText, Loader2, Trash2 } from 'lucide-react';
-import { Button } from '../ui/button';
+
+import { Notification } from '@/api/model';
+import { useGetApiNotifications } from '@/api/notifications/notifications';
+import { Button } from '@/components/ui/button';
 
 export const NotificationList = () => {
   const serverUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';

@@ -1,5 +1,5 @@
-import { CreateNotification } from './components/notifications/CreateNotification';
-import { NotificationList } from './components/notifications/NotificationList';
+import { CreateNotification } from '@/components/notifications/CreateNotification';
+import { NotificationList } from '@/components/notifications/NotificationList';
 
 function App() {
   return (

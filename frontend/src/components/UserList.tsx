@@ -1,5 +1,5 @@
-import { User } from '../api/model';
-import { useGetApiUsers } from '../api/users/users';
+import { User } from '@/api/model';
+import { useGetApiUsers } from '@/api/users/users';
 
 export const UserList = () => {
   const { data: users, isLoading, error } = useGetApiUsers<User[], Error>();
