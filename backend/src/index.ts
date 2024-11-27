@@ -7,6 +7,7 @@ import { specs } from './interface/swagger/config';
 import { userRouter } from './interface/routes/userRoutes';
 import { notificationRouter } from './interface/routes/notificationRoutes';
 import path from 'path';
+import { reportRouter } from './interface/routes/reportRoutes';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/users', userRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/reports', reportRouter);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
