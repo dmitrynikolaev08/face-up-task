@@ -5,10 +5,9 @@
  * API documentation for Face Up Task
  * OpenAPI spec version: 1.0.0
  */
-import type { NotificationFile } from './notificationFile';
 
 export type PostApiNotificationsBody = {
-  files?: NotificationFile[];
+  files?: Blob[];
   message?: string;
   userId?: string;
 };

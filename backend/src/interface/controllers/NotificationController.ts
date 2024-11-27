@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { CreateNotificationUseCase } from '../../useCases/notification/CreateNotification';
 import { GetNotificationsUseCase } from '../../useCases/notification/GetNotifications';
+import { NotificationFile } from '../../domain/entities/Notification';
 
 export class NotificationController extends BaseController {
   constructor(
@@ -15,15 +16,25 @@ export class NotificationController extends BaseController {
     try {
       switch (req.method) {
         case 'POST':
-          const { userId, message, files } = req.body;
+          const { userId, message } = req.body;
           if (!userId || !message) {
             this.clientError(res, 'UserId and message are required');
             return;
           }
+
+          const files = (req.files as Express.Multer.File[])?.map(
+            (file): NotificationFile => ({
+              id: file.filename.split('.')[0],
+              filename: file.originalname,
+              path: `/uploads/${file.filename}`,
+              createdAt: new Date(),
+            }),
+          ) || [];
+
           const notification = await this.createNotificationUseCase.execute(
             userId,
             message,
-            files || [],
+            files,
           );
           this.created(res, notification);
           break;

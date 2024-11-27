@@ -3,6 +3,7 @@ import { NotificationController } from '../controllers/NotificationController';
 import { CreateNotificationUseCase } from '../../useCases/notification/CreateNotification';
 import { GetNotificationsUseCase } from '../../useCases/notification/GetNotifications';
 import { PrismaNotificationRepository } from '../../infrastructure/repositories/PrismaNotificationRepository';
+import { upload } from '../middleware/uploadMiddleware';
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ import { PrismaNotificationRepository } from '../../infrastructure/repositories/
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -62,7 +63,8 @@ import { PrismaNotificationRepository } from '../../infrastructure/repositories/
  *               files:
  *                 type: array
  *                 items:
- *                   $ref: '#/components/schemas/NotificationFile'
+ *                   type: string
+ *                   format: binary
  *     responses:
  *       201:
  *         description: Notification created successfully
@@ -104,7 +106,7 @@ const notificationController = new NotificationController(
   getNotificationsUseCase,
 );
 
-notificationRouter.post('/', (req, res) =>
+notificationRouter.post('/', upload.array('files'), (req, res) =>
   notificationController.execute(req, res),
 );
 notificationRouter.get('/', (req, res) =>

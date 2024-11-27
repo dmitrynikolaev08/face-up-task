@@ -21,7 +21,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
@@ -34,7 +34,8 @@
                   "files": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/NotificationFile"
+                      "type": "string",
+                      "format": "binary"
                     }
                   }
                 }

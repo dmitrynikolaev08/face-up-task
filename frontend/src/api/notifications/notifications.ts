@@ -5,10 +5,7 @@
  * API documentation for Face Up Task
  * OpenAPI spec version: 1.0.0
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,160 +17,249 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query'
+  UseQueryResult,
+} from '@tanstack/react-query';
 import type {
   GetApiNotificationsParams,
   Notification,
-  PostApiNotificationsBody
-} from '.././model'
+  PostApiNotificationsBody,
+} from '.././model';
 import { customInstance } from '../../lib/axios';
-
-
 
 /**
  * @summary Create a new notification
  */
 export const postApiNotifications = (
-    postApiNotificationsBody: PostApiNotificationsBody,
- signal?: AbortSignal
+  postApiNotificationsBody: PostApiNotificationsBody,
+  signal?: AbortSignal,
 ) => {
-      
-      
-      return customInstance<Notification>(
-      {url: `/api/notifications`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: postApiNotificationsBody, signal
-    },
-      );
-    }
-  
+  const formData = new FormData();
+  if (postApiNotificationsBody.userId !== undefined) {
+    formData.append('userId', postApiNotificationsBody.userId);
+  }
+  if (postApiNotificationsBody.message !== undefined) {
+    formData.append('message', postApiNotificationsBody.message);
+  }
+  if (postApiNotificationsBody.files !== undefined) {
+    postApiNotificationsBody.files.forEach((value) =>
+      formData.append('files', value),
+    );
+  }
 
+  return customInstance<Notification>({
+    url: `/api/notifications`,
+    method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    data: formData,
+    signal,
+  });
+};
 
-export const getPostApiNotificationsMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotifications>>, TError,{data: PostApiNotificationsBody}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiNotifications>>, TError,{data: PostApiNotificationsBody}, TContext> => {
-const {mutation: mutationOptions} = options ?? {};
+export const getPostApiNotificationsMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiNotifications>>,
+    TError,
+    { data: PostApiNotificationsBody },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiNotifications>>,
+  TError,
+  { data: PostApiNotificationsBody },
+  TContext
+> => {
+  const { mutation: mutationOptions } = options ?? {};
 
-      
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiNotifications>>,
+    { data: PostApiNotificationsBody }
+  > = (props) => {
+    const { data } = props ?? {};
 
+    return postApiNotifications(data);
+  };
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiNotifications>>, {data: PostApiNotificationsBody}> = (props) => {
-          const {data} = props ?? {};
+  return { mutationFn, ...mutationOptions };
+};
 
-          return  postApiNotifications(data,)
-        }
+export type PostApiNotificationsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiNotifications>>
+>;
+export type PostApiNotificationsMutationBody = PostApiNotificationsBody;
+export type PostApiNotificationsMutationError = unknown;
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiNotificationsMutationResult = NonNullable<Awaited<ReturnType<typeof postApiNotifications>>>
-    export type PostApiNotificationsMutationBody = PostApiNotificationsBody
-    export type PostApiNotificationsMutationError = unknown
-
-    /**
+/**
  * @summary Create a new notification
  */
-export const usePostApiNotifications = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotifications>>, TError,{data: PostApiNotificationsBody}, TContext>, }
-): UseMutationResult<
-        Awaited<ReturnType<typeof postApiNotifications>>,
-        TError,
-        {data: PostApiNotificationsBody},
-        TContext
-      > => {
+export const usePostApiNotifications = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiNotifications>>,
+    TError,
+    { data: PostApiNotificationsBody },
+    TContext
+  >;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof postApiNotifications>>,
+  TError,
+  { data: PostApiNotificationsBody },
+  TContext
+> => {
+  const mutationOptions = getPostApiNotificationsMutationOptions(options);
 
-      const mutationOptions = getPostApiNotificationsMutationOptions(options);
-
-      return useMutation(mutationOptions);
-    }
-    /**
+  return useMutation(mutationOptions);
+};
+/**
  * @summary Get all notifications
  */
 export const getApiNotifications = (
-    params?: GetApiNotificationsParams,
- signal?: AbortSignal
+  params?: GetApiNotificationsParams,
+  signal?: AbortSignal,
 ) => {
-      
-      
-      return customInstance<Notification[]>(
-      {url: `/api/notifications`, method: 'GET',
-        params, signal
-    },
-      );
-    }
-  
+  return customInstance<Notification[]>({
+    url: `/api/notifications`,
+    method: 'GET',
+    params,
+    signal,
+  });
+};
 
-export const getGetApiNotificationsQueryKey = (params?: GetApiNotificationsParams,) => {
-    return [`/api/notifications`, ...(params ? [params]: [])] as const;
-    }
-
-    
-export const getGetApiNotificationsQueryOptions = <TData = Awaited<ReturnType<typeof getApiNotifications>>, TError = unknown>(params?: GetApiNotificationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData>>, }
+export const getGetApiNotificationsQueryKey = (
+  params?: GetApiNotificationsParams,
 ) => {
+  return [`/api/notifications`, ...(params ? [params] : [])] as const;
+};
 
-const {query: queryOptions} = options ?? {};
+export const getGetApiNotificationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiNotifications>>,
+  TError = unknown,
+>(
+  params?: GetApiNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiNotificationsQueryKey(params);
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiNotificationsQueryKey(params);
 
-  
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiNotifications>>
+  > = ({ signal }) => getApiNotifications(params, signal);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiNotifications>>> = ({ signal }) => getApiNotifications(params, signal);
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiNotifications>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData> };
+};
 
-      
+export type GetApiNotificationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiNotifications>>
+>;
+export type GetApiNotificationsQueryError = unknown;
 
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
-}
-
-export type GetApiNotificationsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiNotifications>>>
-export type GetApiNotificationsQueryError = unknown
-
-
-export function useGetApiNotifications<TData = Awaited<ReturnType<typeof getApiNotifications>>, TError = unknown>(
- params: undefined |  GetApiNotificationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData>> & Pick<
+export function useGetApiNotifications<
+  TData = Awaited<ReturnType<typeof getApiNotifications>>,
+  TError = unknown,
+>(
+  params: undefined | GetApiNotificationsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiNotifications>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiNotifications>>,
           TError,
           TData
-        > , 'initialData'
-      >, }
-
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetApiNotifications<TData = Awaited<ReturnType<typeof getApiNotifications>>, TError = unknown>(
- params?: GetApiNotificationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >;
+  },
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData>;
+};
+export function useGetApiNotifications<
+  TData = Awaited<ReturnType<typeof getApiNotifications>>,
+  TError = unknown,
+>(
+  params?: GetApiNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiNotifications>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiNotifications>>,
           TError,
           TData
-        > , 'initialData'
-      >, }
-
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetApiNotifications<TData = Awaited<ReturnType<typeof getApiNotifications>>, TError = unknown>(
- params?: GetApiNotificationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData>>, }
-
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+        >,
+        'initialData'
+      >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+export function useGetApiNotifications<
+  TData = Awaited<ReturnType<typeof getApiNotifications>>,
+  TError = unknown,
+>(
+  params?: GetApiNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
 /**
  * @summary Get all notifications
  */
 
-export function useGetApiNotifications<TData = Awaited<ReturnType<typeof getApiNotifications>>, TError = unknown>(
- params?: GetApiNotificationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotifications>>, TError, TData>>, }
+export function useGetApiNotifications<
+  TData = Awaited<ReturnType<typeof getApiNotifications>>,
+  TError = unknown,
+>(
+  params?: GetApiNotificationsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiNotifications>>,
+        TError,
+        TData
+      >
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+  const queryOptions = getGetApiNotificationsQueryOptions(params, options);
 
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData>;
+  };
 
-  const queryOptions = getGetApiNotificationsQueryOptions(params,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-

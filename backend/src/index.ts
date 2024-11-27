@@ -6,6 +6,7 @@ import cors from 'cors';
 import { specs } from './interface/swagger/config';
 import { userRouter } from './interface/routes/userRoutes';
 import { notificationRouter } from './interface/routes/notificationRoutes';
+import { upload } from './interface/middleware/uploadMiddleware';
 
 dotenv.config();
 

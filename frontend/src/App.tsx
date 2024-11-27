@@ -1,45 +1,22 @@
-import { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import { UserList } from './components/UserList';
+import { CreateNotification } from './components/notifications/CreateNotification';
+import { NotificationList } from './components/notifications/NotificationList';
 
 function App() {
-  const [health, setHealth] = useState<{ status: string } | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setHealth(data))
-      .catch((error) => setError(error.message));
-  }, []);
-
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="container mx-auto max-w-2xl">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">
-          Face Up Task
+          Notification System
         </h1>
 
-        <div className="rounded-lg border bg-card p-8">
-          <div className="flex items-center gap-4">
-            {error ? (
-              <AlertCircle className="h-6 w-6 text-destructive" />
-            ) : health ? (
-              <CheckCircle2 className="h-6 w-6 text-green-500" />
-            ) : (
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            )}
-            <p className="text-xl font-semibold">
-              {error
-                ? 'Error connecting to backend'
-                : health
-                  ? health.status
-                  : 'Checking backend status...'}
-            </p>
+        <div className="space-y-8">
+          <div className="rounded-lg border bg-card p-8">
+            <h2 className="text-2xl font-bold mb-4">Create Notification</h2>
+            <CreateNotification />
           </div>
-          {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+
+          <NotificationList />
         </div>
-        <UserList />
       </div>
     </div>
   );
