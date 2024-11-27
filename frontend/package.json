@@ -20,6 +20,7 @@
     },
     "devDependencies": {
         "@shadcn/ui": "^0.0.4",
+        "@types/node": "^22.10.0",
         "@types/react": "^18.2.64",
         "@types/react-dom": "^18.2.21",
         "@typescript-eslint/eslint-plugin": "^7.1.1",

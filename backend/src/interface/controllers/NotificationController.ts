@@ -3,11 +3,13 @@ import { BaseController } from './BaseController';
 import { CreateNotificationUseCase } from '../../useCases/notification/CreateNotification';
 import { GetNotificationsUseCase } from '../../useCases/notification/GetNotifications';
 import { NotificationFile } from '../../domain/entities/Notification';
+import { DeleteNotificationUseCase } from '../../useCases/notification/DeleteNotification';
 
 export class NotificationController extends BaseController {
   constructor(
     private createNotificationUseCase: CreateNotificationUseCase,
     private getNotificationsUseCase: GetNotificationsUseCase,
+    private deleteNotificationUseCase: DeleteNotificationUseCase,
   ) {
     super();
   }
@@ -22,14 +24,15 @@ export class NotificationController extends BaseController {
             return;
           }
 
-          const files = (req.files as Express.Multer.File[])?.map(
-            (file): NotificationFile => ({
-              id: file.filename.split('.')[0],
-              filename: file.originalname,
-              path: `/uploads/${file.filename}`,
-              createdAt: new Date(),
-            }),
-          ) || [];
+          const files =
+            (req.files as Express.Multer.File[])?.map(
+              (file): NotificationFile => ({
+                id: file.filename.split('.')[0],
+                filename: file.originalname,
+                path: `/uploads/${file.filename}`,
+                createdAt: new Date(),
+              }),
+            ) || [];
 
           const notification = await this.createNotificationUseCase.execute(
             userId,
@@ -44,6 +47,12 @@ export class NotificationController extends BaseController {
             req.query.userId as string,
           );
           this.ok(res, notifications);
+          break;
+
+        case 'DELETE':
+          const { id } = req.params;
+          await this.deleteNotificationUseCase.execute(id);
+          this.ok(res);
           break;
 
         default:

@@ -4,6 +4,7 @@ import { CreateNotificationUseCase } from '../../useCases/notification/CreateNot
 import { GetNotificationsUseCase } from '../../useCases/notification/GetNotifications';
 import { PrismaNotificationRepository } from '../../infrastructure/repositories/PrismaNotificationRepository';
 import { upload } from '../middleware/uploadMiddleware';
+import { DeleteNotificationUseCase } from '../../useCases/notification/DeleteNotification';
 
 /**
  * @swagger
@@ -91,25 +92,52 @@ import { upload } from '../middleware/uploadMiddleware';
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Notification'
+ *   delete:
+ *     summary: Delete a notification
+ *     tags:
+ *       - Notifications
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Notification ID
+ *     responses:
+ *       200:
+ *         description: Notification deleted successfully
+ *       404:
+ *         description: Notification not found
+ *       500:
+ *         description: Server error
  */
 
 const notificationRouter = Router();
 const notificationRepository = new PrismaNotificationRepository();
+
 const createNotificationUseCase = new CreateNotificationUseCase(
   notificationRepository,
 );
 const getNotificationsUseCase = new GetNotificationsUseCase(
   notificationRepository,
 );
+const deleteNotificationUseCase = new DeleteNotificationUseCase(
+  notificationRepository,
+);
+
 const notificationController = new NotificationController(
   createNotificationUseCase,
   getNotificationsUseCase,
+  deleteNotificationUseCase,
 );
 
 notificationRouter.post('/', upload.array('files'), (req, res) =>
   notificationController.execute(req, res),
 );
 notificationRouter.get('/', (req, res) =>
+  notificationController.execute(req, res),
+);
+notificationRouter.delete('/:id', (req, res) =>
   notificationController.execute(req, res),
 );
 
