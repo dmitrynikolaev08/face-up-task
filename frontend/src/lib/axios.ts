@@ -1,4 +1,8 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+
+import { ApiError } from '@/types/api';
+
+import { handleApiError } from './error-handling';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:3000',
@@ -6,6 +10,14 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError<ApiError>) => {
+    handleApiError(error);
+    return Promise.reject(error);
+  },
+);
 
 export const customInstance = <T>(config: AxiosRequestConfig): Promise<T> => {
   const source = axios.CancelToken.source();
