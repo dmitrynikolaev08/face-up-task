@@ -21,7 +21,11 @@ export class PrismaReportRepository implements ReportRepository {
   }
 
   async findAll(): Promise<Report[]> {
-    const reports = await prisma.report.findMany();
+    const reports = await prisma.report.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
     return reports.map(this.mapReport);
   }
 
