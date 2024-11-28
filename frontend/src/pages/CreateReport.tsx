@@ -1,4 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ReportForm } from '@/components/reports/ReportForm';
@@ -16,10 +17,11 @@ export const CreateReport = () => {
   const navigate = useNavigate();
   const { selectedInstitution } = useInstitution();
 
-  if (!selectedInstitution) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (!selectedInstitution) {
+      navigate('/');
+    }
+  }, [selectedInstitution, navigate]);
 
   return (
     <div className="container max-w-2xl mx-auto space-y-6">
@@ -38,7 +40,7 @@ export const CreateReport = () => {
           <CardDescription className="text-lg">
             Send a report to{' '}
             <span className="font-medium text-primary">
-              {selectedInstitution.name}
+              {selectedInstitution?.name}
             </span>
           </CardDescription>
         </CardHeader>
