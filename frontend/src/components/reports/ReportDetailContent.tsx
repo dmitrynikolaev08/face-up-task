@@ -9,6 +9,8 @@ interface ReportDetailContentProps {
 }
 
 export const ReportDetailContent = ({ report }: ReportDetailContentProps) => {
+  const serverUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const renderAttachment = (file: ReportFile) => (
     <div
       key={file.id}
@@ -20,7 +22,7 @@ export const ReportDetailContent = ({ report }: ReportDetailContentProps) => {
     >
       <FileText className="h-4 w-4 shrink-0" />
       <a
-        href={file.path}
+        href={`${serverUrl}${file.path}`}
         target="_blank"
         rel="noopener noreferrer"
         className="hover:underline truncate"
