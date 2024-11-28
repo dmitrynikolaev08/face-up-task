@@ -21,7 +21,12 @@ import type {
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { customInstance } from '../../lib/axios';
-import type { PostApiReportsBody, Report } from '.././model';
+import type {
+  GetApiReports200,
+  GetApiReportsParams,
+  PostApiReportsBody,
+  Report,
+} from '.././model';
 
 /**
  * @summary Create a new report
@@ -109,33 +114,40 @@ export const usePostApiReports = <TError = void, TContext = unknown>(options?: {
 /**
  * @summary Get all reports
  */
-export const getApiReports = (signal?: AbortSignal) => {
-  return customInstance<Report[]>({
+export const getApiReports = (
+  params?: GetApiReportsParams,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetApiReports200>({
     url: `/api/reports`,
     method: 'GET',
+    params,
     signal,
   });
 };
 
-export const getGetApiReportsQueryKey = () => {
-  return [`/api/reports`] as const;
+export const getGetApiReportsQueryKey = (params?: GetApiReportsParams) => {
+  return [`/api/reports`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetApiReportsQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiReports>>,
   TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
-  >;
-}) => {
+>(
+  params?: GetApiReportsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
+    >;
+  },
+) => {
   const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiReportsQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetApiReportsQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiReports>>> = ({
     signal,
-  }) => getApiReports(signal);
+  }) => getApiReports(params, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getApiReports>>,
@@ -152,45 +164,54 @@ export type GetApiReportsQueryError = void;
 export function useGetApiReports<
   TData = Awaited<ReturnType<typeof getApiReports>>,
   TError = void,
->(options: {
-  query: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
-  > &
-    Pick<
-      DefinedInitialDataOptions<
-        Awaited<ReturnType<typeof getApiReports>>,
-        TError,
-        TData
-      >,
-      'initialData'
-    >;
-}): DefinedUseQueryResult<TData, TError> & {
+>(
+  params: undefined | GetApiReportsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiReports>>,
+          TError,
+          TData
+        >,
+        'initialData'
+      >;
+  },
+): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData>;
 };
 export function useGetApiReports<
   TData = Awaited<ReturnType<typeof getApiReports>>,
   TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
-  > &
-    Pick<
-      UndefinedInitialDataOptions<
-        Awaited<ReturnType<typeof getApiReports>>,
-        TError,
-        TData
-      >,
-      'initialData'
-    >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+>(
+  params?: GetApiReportsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiReports>>,
+          TError,
+          TData
+        >,
+        'initialData'
+      >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
 export function useGetApiReports<
   TData = Awaited<ReturnType<typeof getApiReports>>,
   TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
-  >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+>(
+  params?: GetApiReportsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
 /**
  * @summary Get all reports
  */
@@ -198,12 +219,15 @@ export function useGetApiReports<
 export function useGetApiReports<
   TData = Awaited<ReturnType<typeof getApiReports>>,
   TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
-  >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
-  const queryOptions = getGetApiReportsQueryOptions(options);
+>(
+  params?: GetApiReportsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getApiReports>>, TError, TData>
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+  const queryOptions = getGetApiReportsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData>;

@@ -25,6 +25,14 @@ import { useGetApiReports } from '@/api/reports/reports';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
   Table,
   TableBody,
   TableCell,
@@ -118,14 +126,19 @@ export const ReportsTable = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [showFilters, setShowFilters] = useState(false);
-  const { data: reports, isLoading } = useGetApiReports();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const { data, isLoading } = useGetApiReports({
+    page,
+    limit,
+  });
 
   const handleRowClick = (reportId: string) => {
     navigate(`/reports/${reportId}`);
   };
 
   const table = useReactTable({
-    data: reports || [],
+    data: data?.reports || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -150,8 +163,8 @@ export const ReportsTable = () => {
     );
   }
 
-  const filteredRowsCount = table.getFilteredRowModel().rows.length;
-  const totalRowsCount = reports?.length || 0;
+  // const filteredRowsCount = table.getFilteredRowModel().rows.length;
+  // const totalRowsCount = data?.total || 0;
   const hasActiveFilters = columnFilters.length > 0;
 
   return (
@@ -310,8 +323,40 @@ export const ReportsTable = () => {
           </TableBody>
         </Table>
       </div>
-      <div className="text-sm text-muted-foreground">
-        Showing {filteredRowsCount} of {totalRowsCount} reports
+      <div className="flex items-center justify-between align-center pt-5">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                isActive={page !== 1}
+                className="hover:cursor-pointer"
+              />
+            </PaginationItem>
+
+            {Array.from({ length: Math.ceil((data?.total || 0) / limit) }).map(
+              (_, i) => (
+                <PaginationItem key={i + 1}>
+                  <PaginationLink
+                    onClick={() => setPage(i + 1)}
+                    isActive={page === i + 1}
+                    className="hover:cursor-pointer"
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ),
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage((p) => p + 1)}
+                isActive={page < Math.ceil((data?.total || 0) / limit)}
+                className="hover:cursor-pointer"
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );

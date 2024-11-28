@@ -19,13 +19,37 @@ export class PrismaReportRepository implements ReportRepository {
       .then(this.mapReport);
   }
 
-  async findAll(): Promise<Report[]> {
-    const reports = await prisma.report.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    return reports.map(this.mapReport);
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    reports: Report[];
+    total: number;
+  }> {
+    const skip = (page - 1) * limit;
+
+    const [reports, total] = await Promise.all([
+      prisma.report.findMany({
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+        include: {
+          institution: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      }),
+      prisma.report.count(),
+    ]);
+
+    return {
+      reports: reports.map(this.mapReport),
+      total,
+    };
   }
 
   async findById(id: string): Promise<Report | null> {

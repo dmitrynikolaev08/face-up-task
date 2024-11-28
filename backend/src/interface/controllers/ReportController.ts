@@ -59,8 +59,10 @@ export class ReportController extends BaseController {
             }
             this.ok(res, report);
           } else {
-            const reports = await this.getReportsUseCase.execute();
-            this.ok(res, reports);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const result = await this.getReportsUseCase.execute(page, limit);
+            this.ok(res, result);
           }
           break;
 

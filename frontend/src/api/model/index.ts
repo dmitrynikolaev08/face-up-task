@@ -7,6 +7,8 @@
  */
 
 export * from './getApiInstitutionsId404';
+export * from './getApiReports200';
+export * from './getApiReportsParams';
 export * from './institution';
 export * from './postApiReportsBody';
 export * from './report';
