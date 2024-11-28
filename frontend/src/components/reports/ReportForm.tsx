@@ -74,34 +74,36 @@ export const ReportForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="senderName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Your Name</FormLabel>
-              <FormControl>
-                <Input placeholder="John Doe" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid gap-6 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="senderName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Your Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="John Doe" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="senderAge"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Your Age</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="25" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="senderAge"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Your Age</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="25" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -110,27 +112,44 @@ export const ReportForm = () => {
             <FormItem>
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your message..." {...field} />
+                <textarea
+                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Describe your issue in detail..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="space-y-2">
+        <div className="space-y-4">
           <FormLabel>Attachments</FormLabel>
-          <Input
-            type="file"
-            multiple
-            onChange={handleFileChange}
-            accept="image/*,application/pdf,.doc,.docx"
-          />
+          <div className="flex items-center gap-4">
+            <Input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              accept="image/*,application/pdf,.doc,.docx"
+              className="cursor-pointer"
+            />
+            {files.length > 0 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={clearFiles}
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
 
           {fileErrors.length > 0 && (
-            <div className="text-sm text-destructive space-y-1">
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive space-y-1">
               {fileErrors.map((error, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
+                  <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{error}</span>
                 </div>
               ))}
@@ -138,18 +157,22 @@ export const ReportForm = () => {
           )}
 
           {files.length > 0 && (
-            <div className="space-y-2">
+            <div className="rounded-md border bg-muted/50 p-3 space-y-2">
               {files.map((file, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-md border bg-muted p-2"
+                  className="flex items-center justify-between rounded-md bg-background p-2 text-sm"
                 >
-                  <span className="text-sm truncate">{file.name}</span>
+                  <div className="flex items-center gap-2 truncate">
+                    <Send className="h-4 w-4 text-muted-foreground" />
+                    <span className="truncate">{file.name}</span>
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => removeFile(index)}
+                    className="shrink-0"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -162,16 +185,16 @@ export const ReportForm = () => {
         <Button
           type="submit"
           disabled={isPending || fileErrors.length > 0}
-          className="w-full"
+          className="w-full gap-2"
         >
           {isPending ? (
             <>
-              <Loader2 className="animate-spin" />
-              Sending...
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Sending Report...
             </>
           ) : (
             <>
-              <Send />
+              <Send className="h-5 w-5" />
               Send Report
             </>
           )}

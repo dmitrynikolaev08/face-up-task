@@ -50,7 +50,7 @@ export const InstitutionSelect = () => {
       </Select>
 
       <Button
-        className="w-auto"
+        className="w-full"
         size="lg"
         onClick={handleContinue}
         disabled={!selectedInstitution || isLoading}
