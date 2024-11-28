@@ -1,6 +1,7 @@
 import { Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useGetApiInstitutions } from '@/api/institutions/institutions';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -11,18 +12,13 @@ import {
 } from '@/components/ui/select';
 import { useInstitution } from '@/contexts/InstitutionContext';
 
-const institutions = [
-  { id: '1', name: 'Test School' },
-  { id: '2', name: 'Elementary School' },
-  { id: '3', name: 'High School' },
-] as const;
-
 export const Landing = () => {
   const navigate = useNavigate();
   const { selectedInstitution, setSelectedInstitution } = useInstitution();
+  const { data: institutions, isLoading } = useGetApiInstitutions();
 
   const handleInstitutionChange = (institutionId: string) => {
-    const institution = institutions.find((i) => i.id === institutionId);
+    const institution = institutions?.find((i) => i.id === institutionId);
     if (institution) {
       setSelectedInstitution(institution);
     }
@@ -44,13 +40,14 @@ export const Landing = () => {
         <Select
           onValueChange={handleInstitutionChange}
           value={selectedInstitution?.id}
+          disabled={isLoading}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Institution" />
           </SelectTrigger>
           <SelectContent>
-            {institutions.map((institution) => (
-              <SelectItem key={institution.id} value={institution.id}>
+            {institutions?.map((institution) => (
+              <SelectItem key={institution.id} value={institution.id!}>
                 {institution.name}
               </SelectItem>
             ))}
@@ -61,7 +58,7 @@ export const Landing = () => {
           className="w-auto"
           size="lg"
           onClick={handleContinue}
-          disabled={!selectedInstitution}
+          disabled={!selectedInstitution || isLoading}
         >
           <Send className="mr-1 h-4 w-4" />
           Continue

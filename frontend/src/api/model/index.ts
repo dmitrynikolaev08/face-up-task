@@ -7,8 +7,12 @@
  */
 
 export * from './getApiNotificationsParams';
+export * from './institution';
 export * from './notification';
 export * from './notificationFile';
 export * from './postApiNotificationsBody';
+export * from './postApiReportsBody';
 export * from './postApiUsersBody';
+export * from './report';
+export * from './reportFile';
 export * from './user';

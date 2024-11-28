@@ -1,9 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-interface Institution {
-  id: string;
-  name: string;
-}
+import { Institution } from '@/api/model';
 
 interface InstitutionContextType {
   selectedInstitution: Institution | null;
