@@ -35,6 +35,5 @@ Note: You won't be able to access the files uploaded by the users in the seed da
 
 ## Potential improvements
 
-1. Add tests.
-2. Migrate to a more robust database like PostgreSQL.
-3. Store uploaded files on a cloud storage service like AWS S3.
+1. Migrate to a more robust database like PostgreSQL.
+2. Store uploaded files on a cloud storage service like AWS S3.
