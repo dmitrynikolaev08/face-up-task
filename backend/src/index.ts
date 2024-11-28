@@ -4,8 +4,6 @@ import { json } from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import { specs } from './interface/swagger/config';
-import { userRouter } from './interface/routes/userRoutes';
-import { notificationRouter } from './interface/routes/notificationRoutes';
 import path from 'path';
 import { reportRouter } from './interface/routes/reportRoutes';
 import { institutionRouter } from './interface/routes/institutionRoutes';
@@ -21,8 +19,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running!' });
 });
 
-app.use('/api/users', userRouter);
-app.use('/api/notifications', notificationRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/institutions', institutionRouter);
 

@@ -1,7 +1,6 @@
 import prisma from '../database/prismaClient';
 import { Report, ReportFile } from '../../domain/entities/Report';
 import { ReportRepository } from '../../domain/interfaces/ReportRepository';
-import { NotificationFile } from '../../domain/entities/Notification';
 
 export class PrismaReportRepository implements ReportRepository {
   async create(
@@ -72,7 +71,7 @@ export class PrismaReportRepository implements ReportRepository {
   private mapReport(report: any): Report {
     return {
       ...report,
-      files: JSON.parse(report.files) as NotificationFile[],
+      files: JSON.parse(report.files) as ReportFile[],
     };
   }
 }

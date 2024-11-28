@@ -66,7 +66,7 @@ export const ReportDetailContent = ({ report }: ReportDetailContentProps) => {
           </div>
         </div>
 
-        {report.files?.length && report.files.length > 0 && (
+        {report.files && report.files.length > 0 && (
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">
               Attachments ({report.files.length})

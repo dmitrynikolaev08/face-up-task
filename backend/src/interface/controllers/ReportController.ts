@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { CreateReportUseCase } from '../../useCases/report/CreateReport';
-import { NotificationFile } from '../../domain/entities/Notification';
 import { GetReportsUseCase } from '../../useCases/report/GetReports';
 import { DeleteReportUseCase } from '../../useCases/report/DeleteReport';
 import { GetReportByIdUseCase } from '../../useCases/report/GetReportById';
+import { ReportFile } from '../../domain/entities/Report';
 
 export class ReportController extends BaseController {
   constructor(
@@ -29,7 +29,7 @@ export class ReportController extends BaseController {
 
           const files =
             (req.files as Express.Multer.File[])?.map(
-              (file): NotificationFile => ({
+              (file): ReportFile => ({
                 id: file.filename.split('.')[0],
                 filename: file.originalname,
                 path: `/uploads/${file.filename}`,

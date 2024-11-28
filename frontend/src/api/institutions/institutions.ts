@@ -5,6 +5,9 @@
  * API documentation for Face Up Task
  * OpenAPI spec version: 1.0.0
  */
+import {
+  useQuery
+} from '@tanstack/react-query'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -13,286 +16,187 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
-
+  UseQueryResult
+} from '@tanstack/react-query'
+import type {
+  GetApiInstitutionsId404,
+  Institution
+} from '.././model'
 import { customInstance } from '../../lib/axios';
-import type { GetApiInstitutionsId404, Institution } from '.././model';
+
+
 
 /**
  * @summary Get all institutions
  */
-export const getApiInstitutions = (signal?: AbortSignal) => {
-  return customInstance<Institution[]>({
-    url: `/api/institutions`,
-    method: 'GET',
-    signal,
-  });
-};
+export const getApiInstitutions = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Institution[]>(
+      {url: `/api/institutions`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetApiInstitutionsQueryKey = () => {
-  return [`/api/institutions`] as const;
-};
+    return [`/api/institutions`] as const;
+    }
 
-export const getGetApiInstitutionsQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiInstitutions>>,
-  TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiInstitutions>>,
-      TError,
-      TData
-    >
-  >;
-}) => {
-  const { query: queryOptions } = options ?? {};
+    
+export const getGetApiInstitutionsQueryOptions = <TData = Awaited<ReturnType<typeof getApiInstitutions>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData>>, }
+) => {
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiInstitutionsQueryKey();
+const {query: queryOptions} = options ?? {};
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiInstitutions>>
-  > = ({ signal }) => getApiInstitutions(signal);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiInstitutionsQueryKey();
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiInstitutions>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData> };
-};
+  
 
-export type GetApiInstitutionsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiInstitutions>>
->;
-export type GetApiInstitutionsQueryError = void;
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiInstitutions>>> = ({ signal }) => getApiInstitutions(signal);
 
-export function useGetApiInstitutions<
-  TData = Awaited<ReturnType<typeof getApiInstitutions>>,
-  TError = void,
->(options: {
-  query: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiInstitutions>>,
-      TError,
-      TData
-    >
-  > &
-    Pick<
-      DefinedInitialDataOptions<
-        Awaited<ReturnType<typeof getApiInstitutions>>,
-        TError,
-        TData
-      >,
-      'initialData'
-    >;
-}): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData>;
-};
-export function useGetApiInstitutions<
-  TData = Awaited<ReturnType<typeof getApiInstitutions>>,
-  TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiInstitutions>>,
-      TError,
-      TData
-    >
-  > &
-    Pick<
-      UndefinedInitialDataOptions<
-        Awaited<ReturnType<typeof getApiInstitutions>>,
-        TError,
-        TData
-      >,
-      'initialData'
-    >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
-export function useGetApiInstitutions<
-  TData = Awaited<ReturnType<typeof getApiInstitutions>>,
-  TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiInstitutions>>,
-      TError,
-      TData
-    >
-  >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiInstitutionsQueryResult = NonNullable<Awaited<ReturnType<typeof getApiInstitutions>>>
+export type GetApiInstitutionsQueryError = void
+
+
+export function useGetApiInstitutions<TData = Awaited<ReturnType<typeof getApiInstitutions>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInstitutions>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiInstitutions<TData = Awaited<ReturnType<typeof getApiInstitutions>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInstitutions>>,
+          TError,
+          TData
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiInstitutions<TData = Awaited<ReturnType<typeof getApiInstitutions>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 /**
  * @summary Get all institutions
  */
 
-export function useGetApiInstitutions<
-  TData = Awaited<ReturnType<typeof getApiInstitutions>>,
-  TError = void,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof getApiInstitutions>>,
-      TError,
-      TData
-    >
-  >;
-}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
-  const queryOptions = getGetApiInstitutionsQueryOptions(options);
+export function useGetApiInstitutions<TData = Awaited<ReturnType<typeof getApiInstitutions>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutions>>, TError, TData>>, }
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData>;
-  };
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
-  query.queryKey = queryOptions.queryKey;
+  const queryOptions = getGetApiInstitutionsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
 
   return query;
 }
 
+
+
 /**
  * @summary Get institution by ID
  */
-export const getApiInstitutionsId = (id: string, signal?: AbortSignal) => {
-  return customInstance<Institution>({
-    url: `/api/institutions/${id}`,
-    method: 'GET',
-    signal,
-  });
-};
-
-export const getGetApiInstitutionsIdQueryKey = (id: string) => {
-  return [`/api/institutions/${id}`] as const;
-};
-
-export const getGetApiInstitutionsIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
-  TError = GetApiInstitutionsId404 | void,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiInstitutionsId>>,
-        TError,
-        TData
-      >
-    >;
-  },
+export const getApiInstitutionsId = (
+    id: string,
+ signal?: AbortSignal
 ) => {
-  const { query: queryOptions } = options ?? {};
+      
+      
+      return customInstance<Institution>(
+      {url: `/api/institutions/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
 
-  const queryKey =
-    queryOptions?.queryKey ?? getGetApiInstitutionsIdQueryKey(id);
+export const getGetApiInstitutionsIdQueryKey = (id: string,) => {
+    return [`/api/institutions/${id}`] as const;
+    }
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof getApiInstitutionsId>>
-  > = ({ signal }) => getApiInstitutionsId(id, signal);
+    
+export const getGetApiInstitutionsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiInstitutionsId>>, TError = GetApiInstitutionsId404 | void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData>>, }
+) => {
 
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!id,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiInstitutionsId>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData> };
-};
+const {query: queryOptions} = options ?? {};
 
-export type GetApiInstitutionsIdQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getApiInstitutionsId>>
->;
-export type GetApiInstitutionsIdQueryError = GetApiInstitutionsId404 | void;
+  const queryKey =  queryOptions?.queryKey ?? getGetApiInstitutionsIdQueryKey(id);
 
-export function useGetApiInstitutionsId<
-  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
-  TError = GetApiInstitutionsId404 | void,
->(
-  id: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiInstitutionsId>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiInstitutionsId>>> = ({ signal }) => getApiInstitutionsId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetApiInstitutionsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiInstitutionsId>>>
+export type GetApiInstitutionsIdQueryError = GetApiInstitutionsId404 | void
+
+
+export function useGetApiInstitutionsId<TData = Awaited<ReturnType<typeof getApiInstitutionsId>>, TError = GetApiInstitutionsId404 | void>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiInstitutionsId>>,
           TError,
           TData
-        >,
-        'initialData'
-      >;
-  },
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData>;
-};
-export function useGetApiInstitutionsId<
-  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
-  TError = GetApiInstitutionsId404 | void,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiInstitutionsId>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
+        > , 'initialData'
+      >, }
+
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiInstitutionsId<TData = Awaited<ReturnType<typeof getApiInstitutionsId>>, TError = GetApiInstitutionsId404 | void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiInstitutionsId>>,
           TError,
           TData
-        >,
-        'initialData'
-      >;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
-export function useGetApiInstitutionsId<
-  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
-  TError = GetApiInstitutionsId404 | void,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiInstitutionsId>>,
-        TError,
-        TData
-      >
-    >;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+        > , 'initialData'
+      >, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetApiInstitutionsId<TData = Awaited<ReturnType<typeof getApiInstitutionsId>>, TError = GetApiInstitutionsId404 | void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData>>, }
+
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 /**
  * @summary Get institution by ID
  */
 
-export function useGetApiInstitutionsId<
-  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
-  TError = GetApiInstitutionsId404 | void,
->(
-  id: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof getApiInstitutionsId>>,
-        TError,
-        TData
-      >
-    >;
-  },
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
-  const queryOptions = getGetApiInstitutionsIdQueryOptions(id, options);
+export function useGetApiInstitutionsId<TData = Awaited<ReturnType<typeof getApiInstitutionsId>>, TError = GetApiInstitutionsId404 | void>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiInstitutionsId>>, TError, TData>>, }
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData>;
-  };
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
-  query.queryKey = queryOptions.queryKey;
+  const queryOptions = getGetApiInstitutionsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  query.queryKey = queryOptions.queryKey ;
 
   return query;
 }
+
+
+
