@@ -15,4 +15,28 @@ page?: number;
  * The number of items per page
  */
 limit?: number;
+/**
+ * Filter by sender name
+ */
+senderName?: string;
+/**
+ * Filter by sender age
+ */
+senderAge?: number;
+/**
+ * Filter by message
+ */
+message?: string;
+/**
+ * Filter by created at
+ */
+createdAt?: string;
+/**
+ * Sort by field
+ */
+sortField?: string;
+/**
+ * Sort direction
+ */
+sortDirection?: string;
 };

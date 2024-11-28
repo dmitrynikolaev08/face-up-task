@@ -5,6 +5,7 @@ import { GetReportsUseCase } from '../../useCases/report/GetReports';
 import { DeleteReportUseCase } from '../../useCases/report/DeleteReport';
 import { GetReportByIdUseCase } from '../../useCases/report/GetReportById';
 import { ReportFile } from '../../domain/entities/Report';
+import { FilterOptions } from '../../domain/interfaces/ReportRepository';
 
 export class ReportController extends BaseController {
   constructor(
@@ -61,7 +62,29 @@ export class ReportController extends BaseController {
           } else {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
-            const result = await this.getReportsUseCase.execute(page, limit);
+            const sortField = req.query.sortField as string;
+            const sortDirection = req.query.sortDirection as 'asc' | 'desc';
+
+            const filters: FilterOptions = {};
+            if (req.query.senderName)
+              filters.senderName = req.query.senderName as string;
+            if (req.query.senderAge)
+              filters.senderAge = parseInt(req.query.senderAge as string);
+            if (req.query.message)
+              filters.message = req.query.message as string;
+            if (req.query.createdAt)
+              filters.createdAt = req.query.createdAt as string;
+
+            const sort = sortField
+              ? { field: sortField, direction: sortDirection || 'asc' }
+              : undefined;
+
+            const result = await this.getReportsUseCase.execute(
+              page,
+              limit,
+              filters,
+              sort,
+            );
             this.ok(res, result);
           }
           break;

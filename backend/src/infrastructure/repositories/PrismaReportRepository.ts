@@ -1,6 +1,10 @@
 import prisma from '../database/prismaClient';
 import { Report, ReportFile } from '../../domain/entities/Report';
-import { ReportRepository } from '../../domain/interfaces/ReportRepository';
+import {
+  FilterOptions,
+  ReportRepository,
+  SortOptions,
+} from '../../domain/interfaces/ReportRepository';
 
 export class PrismaReportRepository implements ReportRepository {
   async create(
@@ -22,17 +26,40 @@ export class PrismaReportRepository implements ReportRepository {
   async findAll(
     page: number = 1,
     limit: number = 10,
+    filters?: FilterOptions,
+    sort?: SortOptions,
   ): Promise<{
     reports: Report[];
     total: number;
   }> {
     const skip = (page - 1) * limit;
 
+    const where: any = {};
+    if (filters?.senderName) {
+      where.senderName = { contains: filters.senderName };
+    }
+    if (filters?.senderAge) {
+      where.senderAge = Number(filters.senderAge);
+    }
+    if (filters?.message) {
+      where.message = { contains: filters.message };
+    }
+    if (filters?.createdAt) {
+      const date = new Date(filters.createdAt);
+      where.createdAt = {
+        gte: date,
+        lt: new Date(date.getTime() + 24 * 60 * 60 * 1000),
+      };
+    }
+
+    const orderBy: any = sort
+      ? { [sort.field]: sort.direction }
+      : { createdAt: 'desc' };
+
     const [reports, total] = await Promise.all([
       prisma.report.findMany({
-        orderBy: {
-          createdAt: 'desc',
-        },
+        where,
+        orderBy,
         skip,
         take: limit,
         include: {
@@ -43,7 +70,7 @@ export class PrismaReportRepository implements ReportRepository {
           },
         },
       }),
-      prisma.report.count(),
+      prisma.report.count({ where }),
     ]);
 
     return {

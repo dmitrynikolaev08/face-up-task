@@ -147,6 +147,36 @@ import { GetReportByIdUseCase } from '../../useCases/report/GetReportById';
  *           maximum: 100
  *           default: 10
  *         description: The number of items per page
+ *       - in: query
+ *         name: senderName
+ *         schema:
+ *           type: string
+ *         description: Filter by sender name
+ *       - in: query
+ *         name: senderAge
+ *         schema:
+ *           type: number
+ *         description: Filter by sender age  
+ *       - in: query
+ *         name: message
+ *         schema:
+ *           type: string
+ *         description: Filter by message
+ *       - in: query
+ *         name: createdAt
+ *         schema:
+ *           type: string
+ *         description: Filter by created at
+ *       - in: query
+ *         name: sortField
+ *         schema:
+ *           type: string
+ *         description: Sort by field
+ *       - in: query
+ *         name: sortDirection
+ *         schema:
+ *           type: string
+ *         description: Sort direction
  *     responses:
  *       200:
  *         description: Paginated list of reports

@@ -17,7 +17,7 @@ import {
   SortDesc,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Report } from '@/api/model';
@@ -128,10 +128,31 @@ export const ReportsTable = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+
+  // Convert filters and sorting to API parameters
+  const filterParams = Object.fromEntries(
+    columnFilters.map((filter) => [filter.id, filter.value]),
+  );
+
+  const sortParams =
+    sorting.length > 0
+      ? {
+          sortField: sorting[0].id,
+          sortDirection: sorting[0].desc ? 'desc' : 'asc',
+        }
+      : undefined;
+
   const { data, isLoading } = useGetApiReports({
     page,
     limit,
+    ...filterParams,
+    ...sortParams,
   });
+
+  // Reset page when filters or sorting change
+  useEffect(() => {
+    setPage(1);
+  }, [sorting, columnFilters]);
 
   const handleRowClick = (reportId: string) => {
     navigate(`/reports/${reportId}`);
@@ -145,6 +166,9 @@ export const ReportsTable = () => {
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    manualSorting: true,
+    manualFiltering: true,
+    pageCount: Math.ceil((data?.total || 0) / limit),
     state: {
       sorting,
       columnFilters,
