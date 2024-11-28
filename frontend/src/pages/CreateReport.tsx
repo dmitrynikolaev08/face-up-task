@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
 
-import { usePostApiNotifications } from '@/api/notifications/notifications';
+import { usePostApiReports } from '@/api/reports/reports';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -51,26 +51,18 @@ export const CreateReport = () => {
     },
   });
 
-  const { mutate: createNotification, isPending } = usePostApiNotifications();
+  const { mutate: createReport, isPending } = usePostApiReports();
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!selectedInstitution || fileErrors.length > 0) return;
 
-    const formData = new FormData();
-    formData.append('senderName', values.senderName);
-    formData.append('senderAge', values.senderAge.toString());
-    formData.append('message', values.message);
-    formData.append('institutionId', selectedInstitution.id);
-
-    files.forEach((file) => {
-      formData.append('files', file);
-    });
-
-    createNotification(
+    createReport(
       {
         data: {
+          senderName: values.senderName,
+          senderAge: values.senderAge,
           message: values.message,
-          userId: '1', // TODO: get user id
+          institutionId: selectedInstitution.id!,
           files,
         },
       },
@@ -78,7 +70,7 @@ export const CreateReport = () => {
         onSuccess: () => {
           form.reset();
           clearFiles();
-          queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/reports'] });
           navigate('/');
         },
       },
@@ -93,9 +85,9 @@ export const CreateReport = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create Notification</CardTitle>
+        <CardTitle>Create Report</CardTitle>
         <CardDescription>
-          Send a notification to {selectedInstitution.name}
+          Send a report to {selectedInstitution.name}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -198,7 +190,7 @@ export const CreateReport = () => {
               ) : (
                 <>
                   <Send />
-                  Send Notification
+                  Send Report
                 </>
               )}
             </Button>
