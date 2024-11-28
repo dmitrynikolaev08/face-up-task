@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { AlertCircle, Loader2, Send, X } from 'lucide-react';
+import { AlertCircle, Info, Loader2, Send, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
@@ -19,6 +19,8 @@ import { Input } from '@/components/ui/input';
 import { useInstitution } from '@/contexts/InstitutionContext';
 import { useFileUpload } from '@/hooks/useFileUpload';
 
+import { Textarea } from '../ui/textarea';
+
 const formSchema = z.object({
   senderName: z.string().min(2, 'Name must be at least 2 characters'),
   senderAge: z.coerce
@@ -29,6 +31,8 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+const MAX_FILES = 5;
 
 export const ReportForm = () => {
   const navigate = useNavigate();
@@ -112,10 +116,10 @@ export const ReportForm = () => {
             <FormItem>
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <textarea
-                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                <Textarea
                   placeholder="Describe your issue in detail..."
                   {...field}
+                  maxLength={1000}
                 />
               </FormControl>
               <FormMessage />
@@ -124,7 +128,10 @@ export const ReportForm = () => {
         />
 
         <div className="space-y-4">
-          <FormLabel>Attachments</FormLabel>
+          <div className="flex items-center justify-between">
+            <FormLabel>Attachments</FormLabel>
+          </div>
+
           <div className="flex items-center gap-4">
             <Input
               type="file"
@@ -132,6 +139,7 @@ export const ReportForm = () => {
               onChange={handleFileChange}
               accept="image/*,application/pdf,.doc,.docx"
               className="cursor-pointer"
+              disabled={files.length >= MAX_FILES}
             />
             {files.length > 0 && (
               <Button
@@ -144,6 +152,24 @@ export const ReportForm = () => {
               </Button>
             )}
           </div>
+
+          {files.length >= MAX_FILES && (
+            <div className="rounded-md bg-yellow-500/10 p-3 text-sm text-yellow-700 space-y-1">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>Maximum number of files reached ({MAX_FILES})</span>
+              </div>
+            </div>
+          )}
+
+          {files.length === 0 && (
+            <div className="rounded-md bg-muted/50 p-3 text-sm text-muted-foreground space-y-1">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 shrink-0" />
+                <span>No files added</span>
+              </div>
+            </div>
+          )}
 
           {fileErrors.length > 0 && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive space-y-1">

@@ -71,6 +71,14 @@ const columns: ColumnDef<Report>[] = [
   {
     accessorKey: 'message',
     header: 'Message',
+    cell: ({ row }) => {
+      const message = row.getValue('message') as string;
+      return (
+        <div className="max-h-[2.5rem] line-clamp-2 overflow-hidden text-sm text-muted-foreground">
+          {message}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'files',
@@ -152,11 +160,11 @@ export const ReportsTable = () => {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2"
+          className="gap-2 transition-all duration-200"
           onClick={() => setShowFilters(!showFilters)}
         >
           <Filter className="h-4 w-4" />
-          Filters
+          {showFilters ? 'Hide filters' : 'Filters'}
           {hasActiveFilters && (
             <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
               {columnFilters.length}
