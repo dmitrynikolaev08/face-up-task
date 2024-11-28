@@ -38,6 +38,56 @@
         }
       }
     },
+    "/api/institutions/{id}": {
+      "get": {
+        "summary": "Get institution by ID",
+        "tags": [
+          "Institutions"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The institution ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Institution found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Institution"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Institution not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Institution not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/api/notifications": {
       "post": {
         "summary": "Create a new notification",
