@@ -8,7 +8,15 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { FileText, Loader2, SortAsc, SortDesc } from 'lucide-react';
+import {
+  FileText,
+  Filter,
+  Loader2,
+  Search,
+  SortAsc,
+  SortDesc,
+  X,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,41 +36,37 @@ import {
 const columns: ColumnDef<Report>[] = [
   {
     accessorKey: 'senderName',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Sender Name
-          {column.getIsSorted() === 'asc' ? (
-            <SortAsc className="ml-2 h-4 w-4" />
-          ) : (
-            <SortDesc className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="p-0 hover:bg-transparent"
+      >
+        Sender Name
+        {column.getIsSorted() === 'asc' ? (
+          <SortAsc className="ml-2 h-4 w-4" />
+        ) : (
+          <SortDesc className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
   },
   {
     accessorKey: 'senderAge',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Age
-          {column.getIsSorted() === 'asc' ? (
-            <SortAsc className="ml-2 h-4 w-4" />
-          ) : (
-            <SortDesc className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="p-0 hover:bg-transparent"
+      >
+        Age
+        {column.getIsSorted() === 'asc' ? (
+          <SortAsc className="ml-2 h-4 w-4" />
+        ) : (
+          <SortDesc className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
   },
   {
     accessorKey: 'message',
@@ -83,25 +87,21 @@ const columns: ColumnDef<Report>[] = [
   },
   {
     accessorKey: 'createdAt',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Date
-          {column.getIsSorted() === 'asc' ? (
-            <SortAsc className="ml-2 h-4 w-4" />
-          ) : (
-            <SortDesc className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return new Date(row.original.createdAt!).toLocaleDateString();
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="p-0 hover:bg-transparent"
+      >
+        Date
+        {column.getIsSorted() === 'asc' ? (
+          <SortAsc className="ml-2 h-4 w-4" />
+        ) : (
+          <SortDesc className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => new Date(row.original.createdAt!).toLocaleDateString(),
   },
 ];
 
@@ -109,6 +109,7 @@ export const ReportsTable = () => {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [showFilters, setShowFilters] = useState(false);
   const { data: reports, isLoading } = useGetApiReports();
 
   const handleRowClick = (reportId: string) => {
@@ -129,6 +130,10 @@ export const ReportsTable = () => {
     },
   });
 
+  const clearFilters = () => {
+    setColumnFilters([]);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -137,19 +142,118 @@ export const ReportsTable = () => {
     );
   }
 
+  const filteredRowsCount = table.getFilteredRowModel().rows.length;
+  const totalRowsCount = reports?.length || 0;
+  const hasActiveFilters = columnFilters.length > 0;
+
   return (
     <div className="space-y-4">
-      <Input
-        placeholder="Filter by name..."
-        value={
-          (table.getColumn('senderName')?.getFilterValue() as string) ?? ''
-        }
-        onChange={(event) =>
-          table.getColumn('senderName')?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
-      <div className="rounded-md border">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <Filter className="h-4 w-4" />
+          Filters
+          {hasActiveFilters && (
+            <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              {columnFilters.length}
+            </span>
+          )}
+        </Button>
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="gap-2 text-muted-foreground"
+          >
+            <X className="h-4 w-4" />
+            Clear filters
+          </Button>
+        )}
+      </div>
+
+      {showFilters && (
+        <div className="rounded-lg border bg-card">
+          <div className="p-4">
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Name</label>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Filter by name..."
+                    value={
+                      (table
+                        .getColumn('senderName')
+                        ?.getFilterValue() as string) ?? ''
+                    }
+                    onChange={(event) =>
+                      table
+                        .getColumn('senderName')
+                        ?.setFilterValue(event.target.value)
+                    }
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Age</label>
+                <Input
+                  type="number"
+                  placeholder="Filter by age..."
+                  value={
+                    (table
+                      .getColumn('senderAge')
+                      ?.getFilterValue() as string) ?? ''
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn('senderAge')
+                      ?.setFilterValue(event.target.value)
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Message</label>
+                <Input
+                  placeholder="Filter by message..."
+                  value={
+                    (table.getColumn('message')?.getFilterValue() as string) ??
+                    ''
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn('message')
+                      ?.setFilterValue(event.target.value)
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Date</label>
+                <Input
+                  type="date"
+                  value={
+                    (table
+                      .getColumn('createdAt')
+                      ?.getFilterValue() as string) ?? ''
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn('createdAt')
+                      ?.setFilterValue(event.target.value)
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-md border shadow-sm">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -173,7 +277,7 @@ export const ReportsTable = () => {
                 <TableRow
                   key={row.id}
                   onClick={() => handleRowClick(row.original.id!)}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className="cursor-pointer hover:bg-muted/50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -197,6 +301,9 @@ export const ReportsTable = () => {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="text-sm text-muted-foreground">
+        Showing {filteredRowsCount} of {totalRowsCount} reports
       </div>
     </div>
   );
