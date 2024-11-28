@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/table';
 import { useDebounce } from '@/hooks/useDebounce';
 
-import { ReportsFilters } from './ReportsFIlters';
+import { ReportsFilters } from './ReportsFilters';
 import { ReportsPagination } from './ReportsPagination';
 import { ReportsTableHeader } from './ReportsTableHeader';
 
