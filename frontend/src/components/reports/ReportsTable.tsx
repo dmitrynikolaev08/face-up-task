@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { FileText, Loader2, SortAsc, SortDesc } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Report } from '@/api/model';
 import { useGetApiReports } from '@/api/reports/reports';
@@ -105,9 +106,14 @@ const columns: ColumnDef<Report>[] = [
 ];
 
 export const ReportsTable = () => {
+  const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const { data: reports, isLoading } = useGetApiReports();
+
+  const handleRowClick = (reportId: string) => {
+    navigate(`/reports/${reportId}`);
+  };
 
   const table = useReactTable({
     data: reports || [],
@@ -164,7 +170,11 @@ export const ReportsTable = () => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  onClick={() => handleRowClick(row.original.id!)}
+                  className="cursor-pointer hover:bg-muted/50"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

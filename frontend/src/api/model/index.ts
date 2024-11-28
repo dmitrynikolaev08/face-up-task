@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './getApiInstitutionsId404';
 export * from './getApiNotificationsParams';
 export * from './institution';
 export * from './notification';
@@ -15,4 +16,5 @@ export * from './postApiReportsBody';
 export * from './postApiUsersBody';
 export * from './report';
 export * from './reportFile';
+export * from './reportInstitution';
 export * from './user';

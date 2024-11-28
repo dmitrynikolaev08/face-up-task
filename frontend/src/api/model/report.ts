@@ -6,14 +6,28 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { ReportFile } from './reportFile';
+import type { ReportInstitution } from './reportInstitution';
 
 export interface Report {
+  /** Timestamp when the report was created */
   createdAt?: string;
+  /** Attached files */
   files?: ReportFile[];
+  /** The unique identifier of the report */
   id?: string;
-  institutionId?: string;
-  message?: string;
-  senderAge?: number;
-  senderName?: string;
+  institution?: ReportInstitution;
+  /** ID of the institution this report is for */
+  institutionId: string;
+  /** Content of the report */
+  message: string;
+  /**
+   * Age of the sender
+   * @minimum 1
+   * @maximum 150
+   */
+  senderAge: number;
+  /** Name of the person sending the report */
+  senderName: string;
+  /** Timestamp when the report was last updated */
   updatedAt?: string;
 }

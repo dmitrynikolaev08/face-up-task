@@ -7,8 +7,12 @@
  */
 
 export interface ReportFile {
+  /** The timestamp when the file was uploaded */
   createdAt?: string;
-  filename?: string;
-  id?: string;
-  path?: string;
+  /** Original name of the uploaded file */
+  filename: string;
+  /** The unique identifier of the file */
+  id: string;
+  /** Path where the file is stored */
+  path: string;
 }

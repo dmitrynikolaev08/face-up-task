@@ -18,7 +18,7 @@ import type {
 import { useQuery } from '@tanstack/react-query';
 
 import { customInstance } from '../../lib/axios';
-import type { Institution } from '.././model';
+import type { GetApiInstitutionsId404, Institution } from '.././model';
 
 /**
  * @summary Get all institutions
@@ -138,6 +138,155 @@ export function useGetApiInstitutions<
   >;
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
   const queryOptions = getGetApiInstitutionsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+/**
+ * @summary Get institution by ID
+ */
+export const getApiInstitutionsId = (id: string, signal?: AbortSignal) => {
+  return customInstance<Institution>({
+    url: `/api/institutions/${id}`,
+    method: 'GET',
+    signal,
+  });
+};
+
+export const getGetApiInstitutionsIdQueryKey = (id: string) => {
+  return [`/api/institutions/${id}`] as const;
+};
+
+export const getGetApiInstitutionsIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
+  TError = GetApiInstitutionsId404 | void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiInstitutionsId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiInstitutionsIdQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiInstitutionsId>>
+  > = ({ signal }) => getApiInstitutionsId(id, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiInstitutionsId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData> };
+};
+
+export type GetApiInstitutionsIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiInstitutionsId>>
+>;
+export type GetApiInstitutionsIdQueryError = GetApiInstitutionsId404 | void;
+
+export function useGetApiInstitutionsId<
+  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
+  TError = GetApiInstitutionsId404 | void,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiInstitutionsId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInstitutionsId>>,
+          TError,
+          TData
+        >,
+        'initialData'
+      >;
+  },
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData>;
+};
+export function useGetApiInstitutionsId<
+  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
+  TError = GetApiInstitutionsId404 | void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiInstitutionsId>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiInstitutionsId>>,
+          TError,
+          TData
+        >,
+        'initialData'
+      >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+export function useGetApiInstitutionsId<
+  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
+  TError = GetApiInstitutionsId404 | void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiInstitutionsId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+/**
+ * @summary Get institution by ID
+ */
+
+export function useGetApiInstitutionsId<
+  TData = Awaited<ReturnType<typeof getApiInstitutionsId>>,
+  TError = GetApiInstitutionsId404 | void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiInstitutionsId>>,
+        TError,
+        TData
+      >
+    >;
+  },
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+  const queryOptions = getGetApiInstitutionsIdQueryOptions(id, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData>;

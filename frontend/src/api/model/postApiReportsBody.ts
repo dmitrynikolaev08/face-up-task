@@ -7,9 +7,18 @@
  */
 
 export type PostApiReportsBody = {
+  /** Files to attach to the report */
   files?: Blob[];
+  /** ID of the institution */
   institutionId: string;
+  /** Content of the report */
   message: string;
+  /**
+   * Age of the sender
+   * @minimum 1
+   * @maximum 150
+   */
   senderAge: number;
+  /** Name of the sender */
   senderName: string;
 };

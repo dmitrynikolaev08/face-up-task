@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import { CreateReport } from './pages/CreateReport';
 import { Landing } from './pages/Landing';
+import { ReportDetail } from './pages/ReportDetail';
 import { Reports } from './pages/Reports';
 import { SuccessReport } from './pages/SuccessReport';
 
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: 'reports',
         element: <Reports />,
+      },
+      {
+        path: 'reports/:id',
+        element: <ReportDetail />,
       },
     ],
   },
