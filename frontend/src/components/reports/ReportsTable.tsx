@@ -1,4 +1,5 @@
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   flexRender,
@@ -8,30 +9,13 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  FileText,
-  Filter,
-  Loader2,
-  Search,
-  SortAsc,
-  SortDesc,
-  X,
-} from 'lucide-react';
+import { FileText, Loader2, SortAsc, SortDesc } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Report } from '@/api/model';
 import { useGetApiReports } from '@/api/reports/reports';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import {
   Table,
   TableBody,
@@ -40,40 +24,44 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useDebounce } from '@/hooks/useDebounce';
+
+import { ReportsFilters } from './ReportsFIlters';
+import { ReportsPagination } from './ReportsPagination';
+import { ReportsTableHeader } from './ReportsTableHeader';
+
+const SortableHeader = ({
+  column,
+  children,
+}: {
+  column: Column<Report, unknown>;
+  children: React.ReactNode;
+}) => (
+  <Button
+    variant="ghost"
+    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    className="p-0 hover:bg-transparent"
+  >
+    {children}
+    {column.getIsSorted() === 'asc' ? (
+      <SortAsc className="ml-2 h-4 w-4" />
+    ) : (
+      <SortDesc className="ml-2 h-4 w-4" />
+    )}
+  </Button>
+);
 
 const columns: ColumnDef<Report>[] = [
   {
     accessorKey: 'senderName',
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className="p-0 hover:bg-transparent"
-      >
-        Sender Name
-        {column.getIsSorted() === 'asc' ? (
-          <SortAsc className="ml-2 h-4 w-4" />
-        ) : (
-          <SortDesc className="ml-2 h-4 w-4" />
-        )}
-      </Button>
+      <SortableHeader column={column}>Sender Name</SortableHeader>
     ),
   },
   {
     accessorKey: 'senderAge',
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className="p-0 hover:bg-transparent"
-      >
-        Age
-        {column.getIsSorted() === 'asc' ? (
-          <SortAsc className="ml-2 h-4 w-4" />
-        ) : (
-          <SortDesc className="ml-2 h-4 w-4" />
-        )}
-      </Button>
+      <SortableHeader column={column}>Age</SortableHeader>
     ),
   },
   {
@@ -104,18 +92,7 @@ const columns: ColumnDef<Report>[] = [
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className="p-0 hover:bg-transparent"
-      >
-        Date
-        {column.getIsSorted() === 'asc' ? (
-          <SortAsc className="ml-2 h-4 w-4" />
-        ) : (
-          <SortDesc className="ml-2 h-4 w-4" />
-        )}
-      </Button>
+      <SortableHeader column={column}>Date</SortableHeader>
     ),
     cell: ({ row }) => new Date(row.original.createdAt!).toLocaleDateString(),
   },
@@ -129,7 +106,19 @@ export const ReportsTable = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
-  // Convert filters and sorting to API parameters
+  // Filter states
+  const [nameFilter, setNameFilter] = useState('');
+  const [ageFilter, setAgeFilter] = useState('');
+  const [messageFilter, setMessageFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+
+  // Debounced filters
+  const debouncedName = useDebounce(nameFilter);
+  const debouncedAge = useDebounce(ageFilter);
+  const debouncedMessage = useDebounce(messageFilter);
+  const debouncedDate = useDebounce(dateFilter);
+
+  // API parameters
   const filterParams = Object.fromEntries(
     columnFilters.map((filter) => [filter.id, filter.value]),
   );
@@ -154,8 +143,29 @@ export const ReportsTable = () => {
     setPage(1);
   }, [sorting, columnFilters]);
 
+  // Update filters when debounced values change
+  useEffect(() => {
+    const newFilters: ColumnFiltersState = [];
+    if (debouncedName)
+      newFilters.push({ id: 'senderName', value: debouncedName });
+    if (debouncedAge) newFilters.push({ id: 'senderAge', value: debouncedAge });
+    if (debouncedMessage)
+      newFilters.push({ id: 'message', value: debouncedMessage });
+    if (debouncedDate)
+      newFilters.push({ id: 'createdAt', value: debouncedDate });
+    setColumnFilters(newFilters);
+  }, [debouncedName, debouncedAge, debouncedMessage, debouncedDate]);
+
   const handleRowClick = (reportId: string) => {
     navigate(`/reports/${reportId}`);
+  };
+
+  const clearFilters = () => {
+    setNameFilter('');
+    setAgeFilter('');
+    setMessageFilter('');
+    setDateFilter('');
+    setColumnFilters([]);
   };
 
   const table = useReactTable({
@@ -175,10 +185,6 @@ export const ReportsTable = () => {
     },
   });
 
-  const clearFilters = () => {
-    setColumnFilters([]);
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -187,115 +193,27 @@ export const ReportsTable = () => {
     );
   }
 
-  // const filteredRowsCount = table.getFilteredRowModel().rows.length;
-  // const totalRowsCount = data?.total || 0;
-  const hasActiveFilters = columnFilters.length > 0;
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2 transition-all duration-200"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          <Filter className="h-4 w-4" />
-          {showFilters ? 'Hide filters' : 'Filters'}
-          {hasActiveFilters && (
-            <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-              {columnFilters.length}
-            </span>
-          )}
-        </Button>
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="gap-2 text-muted-foreground"
-          >
-            <X className="h-4 w-4" />
-            Clear filters
-          </Button>
-        )}
-      </div>
+      <ReportsTableHeader
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        hasActiveFilters={columnFilters.length > 0}
+        filtersCount={columnFilters.length}
+        onClearFilters={clearFilters}
+      />
 
       {showFilters && (
-        <div className="rounded-lg border bg-card">
-          <div className="p-4">
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Name</label>
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Filter by name..."
-                    value={
-                      (table
-                        .getColumn('senderName')
-                        ?.getFilterValue() as string) ?? ''
-                    }
-                    onChange={(event) =>
-                      table
-                        .getColumn('senderName')
-                        ?.setFilterValue(event.target.value)
-                    }
-                    className="pl-8"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Age</label>
-                <Input
-                  type="number"
-                  placeholder="Filter by age..."
-                  value={
-                    (table
-                      .getColumn('senderAge')
-                      ?.getFilterValue() as string) ?? ''
-                  }
-                  onChange={(event) =>
-                    table
-                      .getColumn('senderAge')
-                      ?.setFilterValue(event.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Message</label>
-                <Input
-                  placeholder="Filter by message..."
-                  value={
-                    (table.getColumn('message')?.getFilterValue() as string) ??
-                    ''
-                  }
-                  onChange={(event) =>
-                    table
-                      .getColumn('message')
-                      ?.setFilterValue(event.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Date</label>
-                <Input
-                  type="date"
-                  value={
-                    (table
-                      .getColumn('createdAt')
-                      ?.getFilterValue() as string) ?? ''
-                  }
-                  onChange={(event) =>
-                    table
-                      .getColumn('createdAt')
-                      ?.setFilterValue(event.target.value)
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <ReportsFilters
+          nameFilter={nameFilter}
+          setNameFilter={setNameFilter}
+          ageFilter={ageFilter}
+          setAgeFilter={setAgeFilter}
+          messageFilter={messageFilter}
+          setMessageFilter={setMessageFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+        />
       )}
 
       <div className="rounded-md border shadow-sm">
@@ -347,41 +265,13 @@ export const ReportsTable = () => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between align-center pt-5">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                isActive={page !== 1}
-                className="hover:cursor-pointer"
-              />
-            </PaginationItem>
 
-            {Array.from({ length: Math.ceil((data?.total || 0) / limit) }).map(
-              (_, i) => (
-                <PaginationItem key={i + 1}>
-                  <PaginationLink
-                    onClick={() => setPage(i + 1)}
-                    isActive={page === i + 1}
-                    className="hover:cursor-pointer"
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ),
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setPage((p) => p + 1)}
-                isActive={page < Math.ceil((data?.total || 0) / limit)}
-                className="hover:cursor-pointer"
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+      <ReportsPagination
+        page={page}
+        setPage={setPage}
+        total={data?.total || 0}
+        limit={limit}
+      />
     </div>
   );
 };
