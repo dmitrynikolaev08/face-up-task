@@ -1,5 +1,5 @@
 import prisma from '../database/prismaClient';
-import { Report } from '../../domain/entities/Report';
+import { Report, ReportFile } from '../../domain/entities/Report';
 import { ReportRepository } from '../../domain/interfaces/ReportRepository';
 import { NotificationFile } from '../../domain/entities/Notification';
 
@@ -28,8 +28,22 @@ export class PrismaReportRepository implements ReportRepository {
   async findById(id: string): Promise<Report | null> {
     const report = await prisma.report.findUnique({
       where: { id },
+      include: {
+        institution: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
-    return report ? this.mapReport(report) : null;
+
+    if (!report) return null;
+
+    return {
+      ...report,
+      files: JSON.parse(report.files) as ReportFile[],
+      institution: report.institution,
+    };
   }
 
   async update(id: string, report: Partial<Report>): Promise<Report> {

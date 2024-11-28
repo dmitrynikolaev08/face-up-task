@@ -4,11 +4,13 @@ import { CreateReportUseCase } from '../../useCases/report/CreateReport';
 import { NotificationFile } from '../../domain/entities/Notification';
 import { GetReportsUseCase } from '../../useCases/report/GetReports';
 import { DeleteReportUseCase } from '../../useCases/report/DeleteReport';
+import { GetReportByIdUseCase } from '../../useCases/report/GetReportById';
 
 export class ReportController extends BaseController {
   constructor(
     private createReportUseCase: CreateReportUseCase,
     private getReportsUseCase: GetReportsUseCase,
+    private getReportByIdUseCase: GetReportByIdUseCase,
     private deleteReportUseCase: DeleteReportUseCase,
   ) {
     super();
@@ -19,7 +21,7 @@ export class ReportController extends BaseController {
       switch (req.method) {
         case 'POST':
           const { senderName, senderAge, message, institutionId } = req.body;
-          
+
           if (!senderName || !senderAge || !message || !institutionId) {
             this.clientError(res, 'All fields are required');
             return;
@@ -42,13 +44,24 @@ export class ReportController extends BaseController {
             institutionId,
             files,
           );
-          
+
           this.created(res, report);
           break;
 
         case 'GET':
-          const reports = await this.getReportsUseCase.execute();
-          this.ok(res, reports);
+          if (req.params.id) {
+            const report = await this.getReportByIdUseCase.execute(
+              req.params.id,
+            );
+            if (!report) {
+              this.notFound(res, 'Report not found');
+              return;
+            }
+            this.ok(res, report);
+          } else {
+            const reports = await this.getReportsUseCase.execute();
+            this.ok(res, reports);
+          }
           break;
 
         case 'DELETE':

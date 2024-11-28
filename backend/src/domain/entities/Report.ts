@@ -1,8 +1,8 @@
 export interface ReportFile {
-    id: string;
-    filename: string;
-    path: string;
-    createdAt: Date;
+  id: string;
+  filename: string;
+  path: string;
+  createdAt: Date;
 }
 
 export interface Report {
@@ -11,6 +11,9 @@ export interface Report {
   senderAge: number;
   message: string;
   institutionId: string;
+  institution?: {
+    name: string;
+  };
   files: ReportFile[];
   createdAt: Date;
   updatedAt: Date;
